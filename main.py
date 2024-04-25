@@ -19,21 +19,23 @@ def evaluate_expression_concurrently(expression):
     return result[0]
 
 def test():
-    expressions = ["2 + 3 * 4 / 2 - 1", "10 * (5 + 3) / 2 - 5", "20 / 4 + 6 - 2 * 3"]
+    expressions = ["1 + 2 * 3 / 4 - 5", "6 * (7 + 8) / 9 - 10", "11 / 12 + 13 - 14 * 15"]
+    print("Enter expression: ")
+    
     
     print("Testing Parallel MDAS Calculator:")
     for exp in expressions:
         start_time = time.time()
         result = evaluate_expression_concurrently(exp)
         end_time = time.time()
-        print(f"Expression: {exp}, Result: {result}, Time: {end_time - start_time:.4f} seconds")
+        print(f"Expression: {exp}, \nResult: {result}, \nTime: {end_time - start_time:.4f} seconds")
 
     print("\nTesting Sequential MDAS Calculator:")
     for exp in expressions:
         start_time = time.time()
         result = evaluate_expression(exp)
         end_time = time.time()
-        print(f"Expression: {exp}, Result: {result}, Time: {end_time - start_time:.4f} seconds")
+        print(f"Expression: {exp},\nResult: {result}, \nTime: {end_time - start_time:.4f} seconds")
 
 if __name__ == "__main__":
     test()
