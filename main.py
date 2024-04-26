@@ -1,41 +1,61 @@
+import time 
 import threading
-import time
-
-def evaluate_expression(expression):
-    expression = expression.replace(" ", "")
-    return eval(expression)
-
-def evaluate_expression_concurrently(expression):
-    expression = expression.replace(" ", "")
-    result = [None]
-
-    def evaluate():
-        result[0] = eval(expression)
-
-    thread = threading.Thread(target=evaluate)
-    thread.start()
-    thread.join()
-
-    return result[0]
-
-def test():
-    expressions = ["1 + 2 * 3 / 4 - 5", "6 * (7 + 8) / 9 - 10", "11 / 12 + 13 - 14 * 15"]
-    print("Enter expression: ")
+import re
+import os 
     
-    
-    print("Testing Parallel MDAS Calculator:")
-    for exp in expressions:
-        start_time = time.time()
-        result = evaluate_expression_concurrently(exp)
-        end_time = time.time()
-        print(f"Expression: {exp}, \nResult: {result}, \nTime: {end_time - start_time:.4f} seconds")
+# Function to parse and compute mathematical expressions
+def compute(expression):
+    # Evaluate the expression
+    result = eval(expression)
+    return result
 
-    print("\nTesting Sequential MDAS Calculator:")
-    for exp in expressions:
-        start_time = time.time()
-        result = evaluate_expression(exp)
-        end_time = time.time()
-        print(f"Expression: {exp},\nResult: {result}, \nTime: {end_time - start_time:.4f} seconds")
+# Function to parse expressions from a string
+def parse_expressions(expression_string):
+    # Define pattern to match expressions
+    expression_pattern = r"([0-9]+(?:\.[0-9]+)?(?:\s*[\+\-\*\/]\s*[0-9]+(?:\.[0-9]+)?)+)"
+    
+    # Find all matches of expressions in the input string
+    expressions = re.findall(expression_pattern, expression_string)
+    return expressions
+
+# Sequential execution without threading
+def sequential_execution(expressions):
+    start_time = time.time()
+    for expression in expressions:
+        compute(expression)
+    end_time = time.time()
+    print("Sequential execution time:", end_time - start_time)
+
+# Parallel execution with threading
+def parallel_execution(expressions):
+    start_time = time.time()
+    threads = []
+    for expression in expressions:
+        t = threading.Thread(target=compute, args=(expression,))
+        threads.append(t)
+        t.start()
+    for t in threads:
+        t.join()
+    end_time = time.time()
+    print("Parallel execution time:", end_time - start_time)
 
 if __name__ == "__main__":
-    test()
+    expression_string = input("Enter mathematical expressions (separated by spaces): ")
+    expressions = parse_expressions(expression_string)
+    print()
+    print()
+    
+    # Compute and print the result of each expression
+    for expression in expressions:
+        result = compute(expression)
+        print(f"{expression} = {result}")
+    
+    print()
+    # Sequential execution
+    sequential_execution(expressions)
+    
+    # Parallel execution
+    parallel_execution(expressions)
+    
+    time.sleep(5)
+
